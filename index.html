@@ -600,69 +600,70 @@
   /* ── SPOTIFY ── */
   .spotify-card {}
 
+  .spotify-inner {
+    display: flex; flex-direction: column; align-items: center; gap: 14px;
+  }
+
   .spotify-connect {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    padding: 8px 0 4px;
-    text-align: center;
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; gap: 12px; padding: 8px 0 4px; text-align: center;
   }
 
   .spotify-icon {
-    width: 48px;
-    height: 48px;
-    background: #1DB954;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
-    box-shadow: 0 4px 16px rgba(29,185,84,0.3);
+    width: 48px; height: 48px; background: #1DB954; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px; box-shadow: 0 4px 16px rgba(29,185,84,0.3);
   }
 
-  .spotify-connect p {
-    font-size: 12px;
-    color: var(--text-soft);
-    line-height: 1.5;
-    max-width: 200px;
-  }
+  .spotify-connect p { font-size: 12px; color: var(--text-soft); line-height: 1.5; max-width: 200px; }
 
   .spotify-connect-btn {
-    background: #1DB954;
-    color: white;
-    border: none;
-    border-radius: 20px;
-    padding: 9px 22px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: default;
-    letter-spacing: 0.5px;
-    opacity: 0.6;
-    position: relative;
+    background: #1DB954; color: white; border: none; border-radius: 20px;
+    padding: 9px 22px; font-family: 'DM Sans', sans-serif; font-size: 13px;
+    font-weight: 600; cursor: pointer; letter-spacing: 0.5px; transition: all 0.2s;
   }
+  .spotify-connect-btn:hover { background: #17a349; transform: translateY(-1px); box-shadow: 0 4px 14px rgba(29,185,84,0.35); }
 
-  .spotify-connect-btn::after {
-    content: 'Coming soon';
-    position: absolute;
-    bottom: calc(100% + 6px);
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--text-dark);
-    color: white;
-    font-size: 10px;
-    font-weight: 400;
-    padding: 4px 8px;
-    border-radius: 6px;
-    white-space: nowrap;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.2s;
+  .spotify-playing { display: none; flex-direction: column; align-items: center; gap: 12px; width: 100%; }
+  .spotify-playing.visible { display: flex; }
+
+  .spotify-album-art {
+    width: 80px; height: 80px; border-radius: 12px; background: var(--jade-pale);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.12); display: flex; align-items: center;
+    justify-content: center; overflow: hidden; flex-shrink: 0;
   }
+  .spotify-album-art img { width: 100%; height: 100%; object-fit: cover; border-radius: 12px; }
+  .spotify-album-placeholder { font-size: 32px; }
 
-  .spotify-connect-btn:hover::after { opacity: 1; }
+  .spotify-info { text-align: center; width: 100%; }
+
+  .spotify-track {
+    font-size: 14px; font-weight: 600; color: var(--text-dark); margin-bottom: 3px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .spotify-artist { font-size: 12px; color: var(--text-soft); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  .spotify-progress-wrap { width: 100%; }
+  .spotify-progress-bar { width: 100%; height: 3px; background: var(--jade-pale); border-radius: 3px; overflow: hidden; margin-bottom: 4px; }
+  .spotify-progress-fill { height: 100%; background: #1DB954; border-radius: 3px; transition: width 1s linear; width: 0%; }
+  .spotify-times { display: flex; justify-content: space-between; font-size: 10px; color: var(--text-soft); }
+
+  .spotify-controls { display: flex; align-items: center; gap: 16px; }
+  .sp-ctrl-btn {
+    background: none; border: none; cursor: pointer; color: var(--text-soft);
+    font-size: 18px; transition: color 0.15s, transform 0.15s;
+    display: flex; align-items: center; justify-content: center; padding: 4px;
+  }
+  .sp-ctrl-btn:hover { color: var(--jade); transform: scale(1.15); }
+  .sp-ctrl-btn.play-pause {
+    width: 36px; height: 36px; border-radius: 50%; background: #1DB954;
+    color: white; font-size: 15px; box-shadow: 0 3px 12px rgba(29,185,84,0.4);
+  }
+  .sp-ctrl-btn.play-pause:hover { transform: scale(1.1); background: #17a349; }
+
+  .spotify-not-playing { display: none; flex-direction: column; align-items: center; gap: 6px; padding: 8px 0; }
+  .spotify-not-playing.visible { display: flex; }
+  .spotify-not-playing p { font-size: 12px; color: var(--text-soft); font-style: italic; }
 
   /* ── MOOD LOG ── */
   .mood-card {}
@@ -1103,10 +1104,47 @@
         <div class="card-header" style="margin-bottom:14px;">
           <div class="card-title"><span class="dot" style="background:#1DB954;"></span> Spotify</div>
         </div>
-        <div class="spotify-connect">
-          <div class="spotify-icon">♪</div>
-          <p>Connect your Spotify to see what you're listening to</p>
-          <button class="spotify-connect-btn">Connect Spotify</button>
+        <div class="spotify-inner" id="spotifyInner">
+
+          <!-- NOT CONNECTED -->
+          <div class="spotify-connect" id="spotifyConnect">
+            <div class="spotify-icon">♪</div>
+            <p>Connect your Spotify to see what you're listening to</p>
+            <button class="spotify-connect-btn" onclick="spotifyConnect()">Connect Spotify</button>
+          </div>
+
+          <!-- NOW PLAYING -->
+          <div class="spotify-playing" id="spotifyPlaying">
+            <div class="spotify-album-art" id="spotifyArt">
+              <span class="spotify-album-placeholder">🎵</span>
+            </div>
+            <div class="spotify-info">
+              <div class="spotify-track"  id="spotifyTrack">—</div>
+              <div class="spotify-artist" id="spotifyArtist">—</div>
+            </div>
+            <div class="spotify-progress-wrap">
+              <div class="spotify-progress-bar">
+                <div class="spotify-progress-fill" id="spotifyFill"></div>
+              </div>
+              <div class="spotify-times">
+                <span id="spotifyElapsed">0:00</span>
+                <span id="spotifyDuration">0:00</span>
+              </div>
+            </div>
+            <div class="spotify-controls">
+              <button class="sp-ctrl-btn" onclick="spotifyPrev()" title="Previous">⏮</button>
+              <button class="sp-ctrl-btn play-pause" id="spPlayPause" onclick="spotifyPlayPause()">⏸</button>
+              <button class="sp-ctrl-btn" onclick="spotifyNext()" title="Next">⏭</button>
+            </div>
+          </div>
+
+          <!-- CONNECTED BUT NOTHING PLAYING -->
+          <div class="spotify-not-playing" id="spotifyIdle">
+            <div class="spotify-icon" style="width:40px;height:40px;font-size:20px;">♪</div>
+            <p>Nothing playing right now.</p>
+            <p style="font-size:11px;">Open Spotify and start a song!</p>
+          </div>
+
         </div>
       </div>
 
@@ -1499,6 +1537,122 @@
   }
 
   renderSavings();
+
+  // ── SPOTIFY ──
+  // To activate:
+  //   1. Go to developer.spotify.com → Log in → "Create app"
+  //   2. Set Redirect URI to your Vercel URL (e.g. https://haileyjade.vercel.app)
+  //   3. Copy the Client ID and paste it below, then redeploy
+  const SPOTIFY_CLIENT_ID = 'YOUR_CLIENT_ID_HERE'; // ← paste Hailey's Client ID here
+  const SPOTIFY_SCOPES    = 'user-read-playback-state user-modify-playback-state user-read-currently-playing';
+
+  let spotifyToken     = localStorage.getItem('haileySpotifyToken') || null;
+  let spotifyExpiry    = parseInt(localStorage.getItem('haileySpotifyExpiry') || '0');
+  let spotifyPollTimer = null;
+
+  (function checkOAuthReturn() {
+    const hash = window.location.hash.substring(1);
+    if (!hash) return;
+    const params = Object.fromEntries(hash.split('&').map(p => p.split('=')));
+    if (params.access_token) {
+      spotifyToken  = params.access_token;
+      spotifyExpiry = Date.now() + parseInt(params.expires_in || 3600) * 1000;
+      try {
+        localStorage.setItem('haileySpotifyToken',  spotifyToken);
+        localStorage.setItem('haileySpotifyExpiry', String(spotifyExpiry));
+      } catch(e) {}
+      history.replaceState(null, '', window.location.pathname);
+      startSpotifyPolling();
+    }
+  })();
+
+  function spotifyConnect() {
+    if (SPOTIFY_CLIENT_ID === 'YOUR_CLIENT_ID_HERE') {
+      alert('To activate Spotify:\n\n1. Go to developer.spotify.com\n2. Log in and create a free app\n3. Copy your Client ID\n4. Open index.html and paste it where it says YOUR_CLIENT_ID_HERE\n5. Set the Redirect URI to this page\'s URL in your Spotify app settings\n6. Redeploy to Vercel');
+      return;
+    }
+    const redirectUri = encodeURIComponent(window.location.origin + window.location.pathname);
+    const url = `https://accounts.spotify.com/authorize?client_id=${SPOTIFY_CLIENT_ID}&response_type=token&redirect_uri=${redirectUri}&scope=${encodeURIComponent(SPOTIFY_SCOPES)}&show_dialog=true`;
+    window.location.href = url;
+  }
+
+  function showSpotifyState(state) {
+    document.getElementById('spotifyConnect').style.display = state === 'connect' ? 'flex' : 'none';
+    document.getElementById('spotifyPlaying').classList.toggle('visible', state === 'playing');
+    document.getElementById('spotifyIdle').classList.toggle('visible',    state === 'idle');
+  }
+
+  async function fetchNowPlaying() {
+    if (!spotifyToken || Date.now() > spotifyExpiry) {
+      showSpotifyState('connect'); return;
+    }
+    try {
+      const res = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
+        headers: { Authorization: `Bearer ${spotifyToken}` }
+      });
+      if (res.status === 204 || res.status === 404) { showSpotifyState('idle'); return; }
+      if (res.status === 401) { spotifyToken = null; showSpotifyState('connect'); return; }
+      if (!res.ok) return;
+      const data = await res.json();
+      if (!data || !data.item) { showSpotifyState('idle'); return; }
+
+      showSpotifyState('playing');
+      document.getElementById('spotifyTrack').textContent  = data.item.name || '—';
+      document.getElementById('spotifyArtist').textContent = data.item.artists?.map(a => a.name).join(', ') || '—';
+
+      const artEl = document.getElementById('spotifyArt');
+      const img = data.item.album?.images?.[1]?.url || data.item.album?.images?.[0]?.url;
+      artEl.innerHTML = img ? `<img src="${img}" alt="Album art">` : '<span class="spotify-album-placeholder">🎵</span>';
+
+      const progress = data.progress_ms || 0;
+      const duration = data.item.duration_ms || 1;
+      document.getElementById('spotifyFill').style.width     = `${(progress / duration) * 100}%`;
+      document.getElementById('spotifyElapsed').textContent  = msToTime(progress);
+      document.getElementById('spotifyDuration').textContent = msToTime(duration);
+      document.getElementById('spPlayPause').textContent     = data.is_playing ? '⏸' : '▶';
+    } catch(e) {}
+  }
+
+  function msToTime(ms) {
+    const s = Math.floor(ms / 1000);
+    return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+  }
+
+  async function spotifyPlayPause() {
+    if (!spotifyToken) return;
+    try {
+      const res  = await fetch('https://api.spotify.com/v1/me/player/currently-playing', { headers: { Authorization: `Bearer ${spotifyToken}` } });
+      if (!res.ok) return;
+      const data = await res.json();
+      const endpoint = data.is_playing ? 'https://api.spotify.com/v1/me/player/pause' : 'https://api.spotify.com/v1/me/player/play';
+      await fetch(endpoint, { method: 'PUT', headers: { Authorization: `Bearer ${spotifyToken}` } });
+      setTimeout(fetchNowPlaying, 400);
+    } catch(e) {}
+  }
+
+  async function spotifyNext() {
+    if (!spotifyToken) return;
+    await fetch('https://api.spotify.com/v1/me/player/next', { method: 'POST', headers: { Authorization: `Bearer ${spotifyToken}` } });
+    setTimeout(fetchNowPlaying, 600);
+  }
+
+  async function spotifyPrev() {
+    if (!spotifyToken) return;
+    await fetch('https://api.spotify.com/v1/me/player/previous', { method: 'POST', headers: { Authorization: `Bearer ${spotifyToken}` } });
+    setTimeout(fetchNowPlaying, 600);
+  }
+
+  function startSpotifyPolling() {
+    fetchNowPlaying();
+    if (spotifyPollTimer) clearInterval(spotifyPollTimer);
+    spotifyPollTimer = setInterval(fetchNowPlaying, 5000);
+  }
+
+  if (spotifyToken && Date.now() < spotifyExpiry) {
+    startSpotifyPolling();
+  } else {
+    showSpotifyState('connect');
+  }
 </script>
 </body>
 </html>
